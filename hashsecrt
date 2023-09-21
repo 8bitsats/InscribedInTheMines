@@ -1,0 +1,94 @@
+# blockchainentropy.py
+# Selects n block headers from the bitcoin blockchain based on a hexadecimal input string. This input string could be a
+# hashed secret passphrase. This approach can be used as an extremely HIGH entropy source for a password which is
+# effectively impossible to brute force.
+#
+# Examples of n (=number of blocks selected):
+#   As of November 2014 there are roughly 300,000 blocks in the bitcoin blockchain.
+#   n = 15: There are 300,000^15 = 2^273 = 10^82 ways of selecting 15 blocks out of 300,000
+#   n = 30: There are 300,000^30 = 2^545 = 10^164 ways of selecting 30 blocks out of 300,000
+#
+#   A sha256 sum yields a 64-character hexadecimal string with can be divided into 15 base-10 integers
+#   A sha512 sum yields a 128-character hexadecimal string with can be divided into 30 base-10 integers
+#
+# High Entropy:
+#   A bitcoin block header is a sha256 checksum with 64 characters which equates to 256 bit of entropy.
+#   Selecting 15 block checksums yields 15 * 256 bit = 3840 bit of entropy, string of length 960
+#   Selecting 30 block checksums yields 30 * 256 bit = 7680 bit of entropy, string of length 1920
+#
+# Hints:
+#   Be smart about the secret passphrase you use as input (sufficient length, entropy, no dictionary words etc.)
+#   Be smart about the hashfunction (use a purposely slow one, e.g. scrypt)
+#
+# Needs electrumtools.py (see bitcoin transaction 593757c37303a8487c60ed2c522b315594b365a66b2012c46da0ac8bb504225a)
+# ash, 2014-12-07
+# Donations welcome: 12dXLgSRrorgWaqFN1WWL8kZxypDcL1i5y
+import os
+import sys
+
+from electrumtools import hash_header, read_header
+
+
+def find_hashes(hex_str, filename='blockchain_headers', verbose=False):
+    if not os.path.exists(filename):
+        print 'blockchain_headers file not found. Download with: '
+        print 'wget http://headers.electrum.org/blockchain_headers'
+        sys.exit(1)
+
+    list_of_hashes = []
+
+    print 'original hexadecimal number (1:20 of total length ' + str(len(hex_str)) + ')'
+    print hex_str[1:20]
+
+    # convert hex number to integer then convert to string
+    int_str = str(int(hex_str, 16))
+
+    print 'original hexadecimal number converted to integer (1:20 of total length ' + str(len(int_str)) + ')'
+    print int_str[1:20]
+
+    i = 0
+    j = 5  # array indices to get integers of length 5 (=range 1-99,999) out of int_str
+
+    k = 1  # scaling parameter to get integers into range 1-300,000, loops from 1 to 3
+    l = 1  # counts number of hashes
+
+    while True:
+        cur_int = int(int_str[i:j])
+
+        # scale value into range 1-300,000,
+        # e.g. (2 * 100,000) - 12345 = 187,655
+        cur_int = (k * 100000) - cur_int
+
+        block_header = hash_header(read_header(filename, cur_int))
+        list_of_hashes.append(block_header)
+        if verbose:
+            if l == 1:
+                print 'blocks and their hashes:'
+            print str(l) + ': ' + str(cur_int) + ' - ' + block_header
+            l += 1
+
+        # prepare indices for next integer (shift by 5)
+        i = j
+        j += 5
+
+        # avoid having a smaller than length 5 integer at the end
+        if j >= len(int_str):
+            break
+
+        # adapt scaling param (rotate k from 1 to 3)
+        if k == 3:
+            k = 1
+        else:
+            k += 1
+
+    return ''.join(list_of_hashes)
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print 'ERROR: args! 1: hex_str'
+        sys.exit(1)
+    else:
+        block_hashes = find_hashes(sys.argv[1], verbose=True)
+
+        print 'all hashes combined (length: ' + str(len(block_hashes)) + '): '
+        print block_hashes
