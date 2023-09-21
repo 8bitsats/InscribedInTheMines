@@ -1,0 +1,7 @@
+# Electrum wordlist sha256 checksum
+import hashlib
+
+if __name__ == "__main__":
+    print hashlib.sha256("".join(words)).hexdigest()
+    #36457fdcaaff463a84891cf5a32710cd754b7efca67060163dd5ae1e5ffe2934
+                  
