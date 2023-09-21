@@ -1,3 +1,21 @@
+Decoding a JPG Image Concealed within the Bitcoin Blockchain:
+
+Introduction: The Bitcoin blockchain is a decentralized ledger that contains all the transaction records since its inception. Sometimes, users embed non-transactional data, such as images, within the blockchain. In this case, we're looking at a JPG image that's hidden within the blockchain.
+
+Image Identification: The image in question is the Bitcoin logo. This logo was encoded using a method called yEnc. yEnc is a binary-to-text encoding scheme that is often used for encoding binary files for transmission over Usenet.
+
+Retrieving Data from the Blockchain:
+
+Start by identifying the specific blocks in the Bitcoin blockchain where the image data is stored.
+Once identified, you can extract the addresses from these blocks. This involves copying (cutting) and pasting the addresses from the relevant blocks into a specific code or program designed to decode the data.
+Decoding Process:
+
+After retrieving the addresses, the next step is to decode the data. For this, you'll need a yEnc decoder.
+Input the extracted data into the yEnc decoder. This decoder will then convert the yEnc encoded data back into its original binary format, which in this case, is the JPG image of the Bitcoin logo.
+Output: Once the decoding process is complete, the output file will be the decoded JPG image, revealing the Bitcoin logo.
+
+
+
 #http://blockexplorer.com/rawblock/00000000000026f0f0e735aab37a2f405161826f84c357f2d35d6daabfb4dff3
 
 data = [
