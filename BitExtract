@@ -3,8 +3,6 @@
 # Requires git://github.com/jgarzik/python-bitcoinrpc.git
 #
 # (c) 2013 Satoshi Nakamoto All Rights Reserved
-#
-# UNAUTHORIZED DUPLICATION AND/OR USAGE OF THIS PROGRAM IS PROHIBITED BY US AND INTERNATIONAL COPYRIGHT LAW
 
 import sys
 import os
