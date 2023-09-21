@@ -1,0 +1,68 @@
+import os
+import hashlib
+# Returns the hash of a block, based on code from Electrum 1.9x. (Electrum's bitcoin.py, blockchain.py, GNU GPL 3,  https://github.com/spesmilo/electrum)
+# Needs blockchain_headers file found at http://headers.electrum.org/blockchain_headers
+# ash, 2014-11-30
+
+def sha256(x):
+    return hashlib.sha256(x).digest()
+
+
+def hash(x):
+    if type(x) is unicode: x = x.encode('utf-8')
+    return sha256(sha256(x))
+
+
+def rev_hex(s):
+    return s.decode('hex')[::-1].encode('hex')
+
+
+def int_to_hex(i, length=1):
+    s = hex(i)[2:].rstrip('L')
+    s = "0" * (2 * length - len(s)) + s
+    return rev_hex(s)
+
+
+def header_to_string(res):
+    s = int_to_hex(res.get('version'), 4) \
+        + rev_hex(res.get('prev_block_hash')) \
+        + rev_hex(res.get('merkle_root')) \
+        + int_to_hex(int(res.get('timestamp')), 4) \
+        + int_to_hex(int(res.get('bits')), 4) \
+        + int_to_hex(int(res.get('nonce')), 4)
+    return s
+
+
+def header_from_string(s):
+    hex_to_int = lambda s: int('0x' + s[::-1].encode('hex'), 16)
+    hash_encode = lambda x: x[::-1].encode('hex')
+    h = {}
+    h['version'] = hex_to_int(s[0:4])
+    h['prev_block_hash'] = hash_encode(s[4:36])
+    h['merkle_root'] = hash_encode(s[36:68])
+    h['timestamp'] = hex_to_int(s[68:72])
+    h['bits'] = hex_to_int(s[72:76])
+    h['nonce'] = hex_to_int(s[76:80])
+    return h
+
+
+def read_header(filename, block_height):
+    if os.path.exists(filename):
+        f = open(filename, 'rb')
+        f.seek(block_height * 80)
+        h = f.read(80)
+        f.close()
+        if len(h) == 80:
+            h = header_from_string(h)
+            return h
+
+
+def hash_header(header):
+    return rev_hex(hash(header_to_string(header).decode('hex')).encode('hex'))
+
+
+if __name__ == '__main__':
+    filename = 'blockchain_headers'	# wget http://headers.electrum.org/blockchain_headers
+    h = read_header(filename, 0)
+
+    print hash_header(h)
