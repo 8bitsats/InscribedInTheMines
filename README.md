@@ -49,3 +49,7 @@ Will look into taproot integration as well as unitsat and xverse.
 
 Example Message Inscribed in the Mines:
 https://www.blockchain.com/explorer/transactions/btc/59bd7b2cff5da929581fc9fef31a2fba14508f1477e366befb1eb42a8810a000
+
+Just added Bitscription
+
+
