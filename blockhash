@@ -1,0 +1,12 @@
+Get a block hash (and much more...) from blockchain.info API:
+wget https://blockchain.info/block-height/1?format=json
+
+Check for main_chain = True because of 38 orphaned blocks returned together with the main chain blocks from block 1 to 300,000:
+
+j = urllib2.urlopen("https://blockchain.info/block-height/" + str(block_height) + "?format=json")
+j_obj = json.load(j)
+
+for b in range(0, len(j_obj["blocks"])):
+        if j_obj["blocks"][b]["main_chain"] == True:
+                hash = str(j_obj["blocks"][b]["hash"])
+   
