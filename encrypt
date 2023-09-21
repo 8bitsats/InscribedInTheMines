@@ -1,0 +1,31 @@
+import string
+import itertools
+import getpass
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-m", dest="m", choices=["d", "e"], default="d")
+args = parser.parse_args()
+
+alphabet = string.letters + string.digits  # len 62
+pw = getpass.getpass(prompt="pw: ")
+ot = getpass.getpass(prompt="onetimepad: ")
+
+c = list()
+for p, o in zip(pw, itertools.cycle(ot)):
+    i = alphabet.index(p)
+    j = alphabet.index(o)
+
+    if args.m == "e":
+        k = i + j
+        if k > len(alphabet):
+            k %= len(alphabet)
+    elif args.m == "d":
+        k = i - j
+        if k < 0:
+            k %= len(alphabet)
+
+    c.append(alphabet[k])
+
+print "".join(c)
+         
