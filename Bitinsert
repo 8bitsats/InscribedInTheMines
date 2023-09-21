@@ -1,10 +1,6 @@
+Here's the code in the blockchain to insert data into the blockchain:
 
-# File insertion tool for Bitcoin
-# Requires git://github.com/jgarzik/python-bitcoinrpc.git
-#
-# (c) 2013 Satoshi Nakamoto All Rights Reserved
-#
-
+This is by Satoshi himself....
 
 import io
 import jsonrpc
